@@ -2,6 +2,7 @@ package com.course.fullstackprojectbackend.services;
 
 import com.course.fullstackprojectbackend.domain.Category;
 import com.course.fullstackprojectbackend.repositories.CategoryRepository;
+import com.course.fullstackprojectbackend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,9 @@ public class CategoryService {
 
     public Category findById(Integer id){
         Optional<Category> category = repository.findById(id);
-        return category.orElse(null);
+        return category.orElseThrow(() -> new ObjectNotFoundException(
+                "Object Not Found. ID: " + id + " Type: " + Category.class.getName()
+        ));
     }
 
 
