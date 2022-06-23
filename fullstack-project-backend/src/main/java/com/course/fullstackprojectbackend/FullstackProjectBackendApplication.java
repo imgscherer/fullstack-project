@@ -1,19 +1,13 @@
 package com.course.fullstackprojectbackend;
 
-import com.course.fullstackprojectbackend.domain.Category;
-import com.course.fullstackprojectbackend.domain.City;
-import com.course.fullstackprojectbackend.domain.Product;
-import com.course.fullstackprojectbackend.domain.State;
-import com.course.fullstackprojectbackend.repositories.CategoryRepository;
-import com.course.fullstackprojectbackend.repositories.CityRepository;
-import com.course.fullstackprojectbackend.repositories.ProductRepository;
-import com.course.fullstackprojectbackend.repositories.StateRepository;
+import com.course.fullstackprojectbackend.domain.*;
+import com.course.fullstackprojectbackend.enums.ClientType;
+import com.course.fullstackprojectbackend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 @SpringBootApplication
@@ -30,6 +24,13 @@ public class FullstackProjectBackendApplication implements CommandLineRunner {
 
     @Autowired
     private CityRepository cityRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
+    @Autowired
+    private ClientRepository clientRepository;
+
     public static void main(String[] args) {
         SpringApplication.run(FullstackProjectBackendApplication.class, args);
     }
@@ -65,6 +66,17 @@ public class FullstackProjectBackendApplication implements CommandLineRunner {
 
         stateRepository.saveAll(Arrays.asList(sta1, sta2));
         cityRepository.saveAll(Arrays.asList(cit1, cit2, cit3));
+
+        Client cli1 = new Client(null, "Maria Silva", "maria@gmail.com", "36378912377", ClientType.PESSOAFISICA);
+        cli1.getPhones().addAll(Arrays.asList("27363323", "93838393"));
+
+        Address adr1 = new Address(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, cit1);
+        Address adr2 = new Address(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, cit2);
+
+        cli1.getAddresses().addAll(Arrays.asList(adr1, adr2));
+
+        clientRepository.saveAll(Arrays.asList(cli1));
+        addressRepository.saveAll(Arrays.asList(adr1, adr2));
 
     }
 }
