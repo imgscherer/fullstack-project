@@ -2,12 +2,14 @@ package com.course.fullstackprojectbackend;
 
 import com.course.fullstackprojectbackend.domain.*;
 import com.course.fullstackprojectbackend.enums.ClientType;
+import com.course.fullstackprojectbackend.enums.PaymentStatus;
 import com.course.fullstackprojectbackend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 @SpringBootApplication
@@ -30,6 +32,12 @@ public class FullstackProjectBackendApplication implements CommandLineRunner {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Autowired
+    private PurchaseOrderRepository purchaseOrderRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(FullstackProjectBackendApplication.class, args);
@@ -77,6 +85,22 @@ public class FullstackProjectBackendApplication implements CommandLineRunner {
 
         clientRepository.saveAll(Arrays.asList(cli1));
         addressRepository.saveAll(Arrays.asList(adr1, adr2));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+        PurchaseOrder ord1 = new PurchaseOrder(null, sdf.parse("30/09/2017 10:32"), cli1, adr1);
+        PurchaseOrder ord2 = new PurchaseOrder(null, sdf.parse("10/10/2017 19:35"), cli1, adr2);
+
+        Payment pay1 = new CreditCardPayment(null, PaymentStatus.QUITADO, ord1, 6);
+        ord1.setPayment(pay1);
+
+        Payment pay2 = new SlipPayment(null, PaymentStatus.PENDENTE, ord2, sdf.parse("20/10/2017 00:00"), null);
+        ord2.setPayment(pay2);
+
+        cli1.getOrders().addAll(Arrays.asList(ord1, ord2));
+
+        purchaseOrderRepository.saveAll(Arrays.asList(ord1, ord2));
+        paymentRepository.saveAll(Arrays.asList(pay1, pay2));
 
     }
 }
